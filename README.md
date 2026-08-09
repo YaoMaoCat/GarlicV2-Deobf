@@ -1,5 +1,7 @@
 # GarlicV2-Deobf
 
+> **中文版本: [README_CN.md](README_CN.md)**
+
 > **This is not an original project.**
 >
 > Every C / C++ / PowerShell / CMake file in this tree (everything in
