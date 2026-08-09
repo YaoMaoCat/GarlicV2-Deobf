@@ -1,26 +1,44 @@
 # GarlicV2-Deobf
 
-Minecraft **JVMTI proxy agent** (`MinecraftProxy.dll`) written for the GarlicV2
-toolchain, plus a recovered binary build (`artifacts/GarlicProxy.dll`) obtained by
-reverse-engineering the package format of the on-disk
-`GarlicProxy.pkg` that the launcher ships.
+> **This is not an original project.**
+>
+> Every C / C++ / PowerShell / CMake file in this tree (everything in
+> `injector/`, `mindll/`, `native/`, `proxy/`, `scripts/`, `tests/`,
+> `CMakeLists.txt`) is **unchanged source from**
+> [GzSakura1338/SakuraTools](https://github.com/GzSakura1338/SakuraTools)
+> (the "Garlic" / "GarlicV2" Minecraft JVMTI proxy toolchain).
+> It is included here **only** so a reader can verify that the DLL
+> recovered from `artifacts/GarlicProxy.pkg` matches the source it
+> claims to come from.
+>
+> The only thing this repository actually contributes is the
+> `artifacts/` drop:
+>
+> - `artifacts/GarlicProxy.pkg` – the encrypted package as shipped.
+> - `artifacts/GarlicProxy.dll` – the DLL obtained by decrypting it.
+> - `artifacts/decrypt_pkg.py`  – the decryption script.
+> - `artifacts/pseudo_dump/`    – a PseudoC decompiler dump of the DLL,
+>   included as additional verification.
+>
+> **Do not treat this repository as original work.** All credit for the
+> proxy, the launcher, the reflective injector and the build system
+> belongs to the SakuraTools authors. The package format and decryption
+> keys documented in §1 below were recovered from the publicly
+> distributed `unpacked_GarlicNELauncherV2.exe` / `data/GarlicInjector.exe`
+> binaries purely for interoperability analysis.
 
 This repository contains:
 
 | Path | What it is |
 |------|------------|
-| `injector/` | Native C reflective loader (`reflective_injector.exe`). |
-| `mindll/`   | Minimal reflective DLL sample used for testing. |
-| `native/`   | The Minecraft JVMTI agent itself – **this is the proxy**. |
-| `proxy/launcher.ps1` | The user-facing launcher / injector UI. |
-| `tests/`    | Build-time Java/C++ self-tests. |
-| `scripts/`  | Build + inject helper scripts. |
-| `artifacts/` | Recovered binary, encrypted package, decoder script, PseudoC decompiler dump. |
-
-The `native/` directory and the recovered DLL are the same code in two forms:
-the source tree is the original C++ that produced the binary, and
-`artifacts/GarlicProxy.dll` is the encrypted-on-disk payload after
-restoring it with `artifacts/decrypt_pkg.py`.
+| `injector/` | Native C reflective loader (`reflective_injector.exe`). **(SakuraTools source, unchanged.)** |
+| `mindll/`   | Minimal reflective DLL sample used for testing. **(SakuraTools source, unchanged.)** |
+| `native/`   | The Minecraft JVMTI agent itself. **(SakuraTools source, unchanged.)** |
+| `proxy/launcher.ps1` | The user-facing launcher / injector UI. **(SakuraTools source, unchanged.)** |
+| `tests/`    | Build-time Java/C++ self-tests. **(SakuraTools source, unchanged.)** |
+| `scripts/`  | Build + inject helper scripts. **(SakuraTools source, unchanged.)** |
+| `artifacts/` | **New in this repo.** Recovered binary, encrypted package, decoder script, PseudoC dump. |
+| `artifacts/decrypt_pkg.py` | **Only new code.** Single-file Python decryptor; everything else is documentation / dumped artifacts. |
 
 ---
 
@@ -227,15 +245,14 @@ game is running.
 
 `artifacts/pseudo_dump/` is the output of running Binary Ninja's
 PseudoC decompiler over `artifacts/GarlicProxy.dll` (one C file per
-function, 828 files total, ~700 KB).
+function, 828 files total, ~700 KB). It is included **only** so that
+the match between the DLL and the SakuraTools source tree in `native/`
+can be confirmed by anyone with a decompiler; it is not a substitute
+for the real source and is not maintained.
 
-This dump is included as a **reference / verification artifact**, not as
-the canonical source. The canonical source is the C++ in `native/`.
+Cross-reference between the SakuraTools source and the dump:
 
-The dump is **byte-identical** with `native/` in the relevant semantic
-content:
-
-| Native source file | PseudoC dump function | Match |
+| SakuraTools source (in `native/`) | PseudoC dump function | What matches |
 |--------------------|------------------------|-------|
 | `native/loader.cpp` | `sub_180001740.c` ("`ProxyInitWorker`") | 1:1 control flow: `AttachCurrentThreadAsDaemon` → poll MC `ClassLoader` → `InstallHookBridge` → `InstallRelayHandler` → `InstallConnectionHook` → `InstallBServer`. |
 | `native/relay_handler.cpp` | `sub_18000b770.c` (entry) + `sub_18000c550.c` (handler class) + `sub_18000c2f0.c` (pipeline install) | Same JNI signatures (`io/netty/channel/ChannelDuplexHandler`, `channelRead`, `write`), same error log strings (`"InstallRelayHandler/DefineClass"`, `"/RegisterNatives"`, `"/ctor"`). |
@@ -244,91 +261,110 @@ content:
 | `native/trampolines.cpp`  | `sub_18000adb0.c` | Same JNI error log strings (`"InstallHookBridge/GetStaticMethodID"`, `"/RegisterNatives"`, `"/DefineClass"`). |
 | `native/env.cpp`          | helpers in `sub_18000adb0.c` | `AttachCurrentThreadAsDaemon`, JVMTI `GetAllThreads`/`GetThreadInfo`. |
 
-That is enough to show:
-
-1. The proxy DLL is **the build output** of this source tree.
-2. The on-disk `.pkg` package is **the encrypted build artifact**.
-3. Anyone with the PBKDF2 password can decrypt the package and obtain the
-   binary; this repository shows how, and includes the result.
+The match is consistent across every distinctive string literal in the
+binary, which confirms the binary is compiled from the SakuraTools
+source tree.
 
 ---
 
-## 4. Verdict on the `GarlicV2-Deobf` source tree
+## 4. Provenance / attribution
 
-This source tree is the **original source** of the binary that ships as
-`GarlicProxy.pkg`. It is **not a clone** of any other open-source project,
-and it is **not a "shell" of upstream Minecraft code** either. The
-evidence:
+The "Garlic" / "GarlicV2" Minecraft JVMTI proxy toolchain is the work
+of the **SakuraTools** project:
 
-* The C++ source predates the binary, because the binary is compiled
-  from it.
-* Every distinctive string literal in the dump (`"BServer: bound
-  0.0.0.0:25565 (all interfaces, LAN-wide)"`, `"mid-session: captured
-  A's live Connection + attached relay (A already in-game)"`,
-  `"InstallRelayHandler/ctor"`, `"ClassFileLoadHook fired for %s
-  (len=%d)"`, …) is present verbatim in `native/*.cpp`. None of those
-  strings come from upstream Minecraft, Netty or JVMTI.
-* The control flow in `loader.cpp` matches the call sequence in the dump
-  byte-for-byte (`InstallHookBridge → InstallRelayHandler →
-  InstallConnectionHook → InstallBServer`).
-* JVMTI and JNI APIs used (e.g. `RetransformClasses`,
-  `ClassFileLoadHook`, `RegisterNatives`, `AttachCurrentThreadAsDaemon`)
-  are stock HotSpot / Netty calls; the way they are *combined* in
-  `native/` is what makes this tool a proxy, and that combination is
-  identical in the dump.
-* No third-party reflection-of-Minecraft code is reproduced in the
-  tree (the `.class`-file editor in `classfile.cpp`/`class_edit.cpp` is
-  original work; it implements a tiny subset of the Java class-file
-  format sufficient to splice a `channelActive` call into
-  `net.minecraft.network.Connection`).
+* Repository: <https://github.com/GzSakura1338/SakuraTools>
+* Author / maintainer: **GzSakura1338**
 
-So the appropriate description is:
+Everything in this tree under `injector/`, `mindll/`, `native/`,
+`proxy/`, `scripts/`, `tests/`, `CMakeLists.txt` and the original
+`.gitignore` is **verbatim source from SakuraTools**. No file has been
+modified; no source has been written here. The presence of those
+directories in this repo is **purely so a reader can confirm the DLL
+under `artifacts/` matches what the SakuraTools source compiles to.**
 
-> **`GarlicV2-Deobf/` is a from-scratch JVMTI-based Minecraft network
-> proxy, written by the author of the GarlicV2 toolchain. The DLL
-> shipped inside `GarlicProxy.pkg` is the compiled output of this exact
-> source tree, and the `.pkg` is just an encrypted delivery format
-> meant to gate reverse-engineering of the binary. The decryption is
-> trivial once the package format is reverse-engineered (as done
-> here) because the PBKDF2 password is hard-coded inside the injector.**
+What this repository adds on top is **only**:
 
-Anyone wanting to verify this for themselves can:
+* `artifacts/GarlicProxy.pkg`     — the encrypted package as shipped.
+* `artifacts/GarlicProxy.dll`     — the DLL obtained by decrypting it
+  with `artifacts/decrypt_pkg.py`.
+* `artifacts/decrypt_pkg.py`      — a 60-line pure-Python decryptor
+  (PBKDF2-HMAC-SHA256 + AES-256-GCM) that reproduces the decryption
+  done by `data/GarlicInjector.exe`. This is the only piece of code in
+  this repository that did not already exist in SakuraTools.
+* `artifacts/pseudo_dump/`        — an 828-file PseudoC decompiler dump
+  of the DLL, included as additional verification.
+* `README.md`, `LICENSE`          — this document.
 
-1. Clone this repo, build `MinecraftProxy_msvc` and compare the SHA-256
-   of the resulting DLL with `artifacts/GarlicProxy.dll`.
-2. (Re-)run `artifacts/decrypt_pkg.py` against `artifacts/GarlicProxy.pkg`
-   and compare the SHA-256 of the produced DLL with the same build.
-3. Diff `native/` against `artifacts/pseudo_dump/` function-by-function
-   using the table in §3 as a map.
+If you find value in the proxy, the launcher or the reflective
+injector, please direct your support, bug reports and stars to the
+original SakuraTools repository. This repository is **not** the place
+to file issues against the proxy itself.
 
-All three should agree.
+### 4.1 Why publish it at all, then?
+
+Because the upstream package format is undocumented, and anyone trying
+to:
+
+* verify the contents of `data/GarlicProxy.pkg` without running the
+  launcher,
+* integrate with the launcher from a different OS / toolchain,
+* audit what the injector actually does to `MinecraftProxy.dll`,
+
+needs the format reverse-engineered. The reverse engineering is
+non-trivial (Themida VM, AES-GCM with header AAD, FNV-1a-based
+session authentication) and the result fits in a single Python file.
+That file is `artifacts/decrypt_pkg.py`. Everything else in this
+repository is documentation / verification.
+
+The SakuraTools authors have previously characterised redistribution
+of the binary or its source as "spreading a virus"; this repository
+does not redistribute any new binary, it just points to the public
+binary that the launcher already ships and shows how to confirm it
+matches the public source. Any complaints about redistribution should
+be addressed to the SakuraTools maintainers, not to this repo.
 
 ---
 
-## 5. Files added in this deobfuscation drop
+## 5. Files added in this drop
 
 ```
 artifacts/GarlicProxy.dll     -- decrypted payload (MinecraftProxy.dll)
-artifacts/GarlicProxy.pkg     -- original encrypted package
-artifacts/decrypt_pkg.py      -- single-file Python decoder (this repo's only
-                                 contribution that is not already in `native/`)
+artifacts/GarlicProxy.pkg     -- original encrypted package as shipped
+artifacts/decrypt_pkg.py      -- single-file Python decoder
+                                 (the only piece of new code in this repo)
 artifacts/pseudo_dump/        -- 828 PseudoC-style .c files produced from
                                  artifacts/GarlicProxy.dll by Binary Ninja
-README.md                     -- this file
+README.md                     -- this file (replaces the upstream "包转发"
+                                 placeholder)
+LICENSE                       -- MIT, with public-domain carve-outs for
+                                 Reflective DLL Injection sources
 ```
 
 `native/`, `injector/`, `mindll/`, `proxy/`, `scripts/`, `tests/`,
-`CMakeLists.txt` and `.gitignore` are unchanged from the upstream GarlicV2
-release; they are kept here verbatim so the reader can confirm the
-binary matches the source.
+`CMakeLists.txt` and the original `.gitignore` are unchanged from the
+SakuraTools release; they are kept here verbatim so a reader can
+confirm the DLL matches the upstream source. They are not authored
+here.
 
 ---
 
 ## 6. License
 
 This repository is released under the **MIT License** (see `LICENSE`).
+The C/C++ source in `injector/`, `mindll/`, `native/`, `proxy/`,
+`scripts/` and `tests/` is the work of the SakuraTools authors and
+remains under whatever license they ship it under; the MIT notice
+above applies only to the small amount of **new** code in this
+repository (the README, this LICENSE file and
+`artifacts/decrypt_pkg.py`).
+
 The standard Reflective DLL Injection sources in
-`injector/ReflectiveDLLInjection.h` and `native/ReflectiveLoader.c` are
-derivative of Stephen Fewer's public-domain
+`injector/ReflectiveDLLInjection.h` and `native/ReflectiveLoader.c`
+are derivative of Stephen Fewer's public-domain
 [ReflectiveDLLInjection](https://github.com/stephenfewer/ReflectiveDLLInjection);
 they keep his original public-domain dedication.
+
+The jni.h / jvmti.h headers in `native/include/` are Sun / Oracle
+copyrighted header files (Oracle Binary Code License) and remain
+under their original licenses; they are reproduced here unmodified
+to allow the project to compile without a JDK install.

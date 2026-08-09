@@ -1,6 +1,6 @@
-MIT License
+MIT License (applies only to the new files in this repository)
 
-Copyright (c) 2024-2026 GarlicV2 Contributors
+Copyright (c) 2024-2026
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,26 @@ SOFTWARE.
 
 ---
 
+**Scope of this MIT notice**
+
+This MIT notice covers ONLY the following files in this repository, which
+are the only files actually authored in this repository:
+
+* `README.md`
+* `LICENSE`  (this file)
+* `artifacts/decrypt_pkg.py`
+
+Every other file in this repository was written by the SakuraTools
+authors (https://github.com/GzSakura1338/SakuraTools) and is shipped
+here verbatim from their public repository. They remain under whatever
+license SakuraTools releases them under; the MIT notice above does not
+re-license them.
+
+---
+
 The following files in this repository are derivative of Stephen Fewer's
-public-domain `ReflectiveDLLInjection` project and remain in the public domain:
+public-domain `ReflectiveDLLInjection` project and remain in the public
+domain:
 
 * injector/ReflectiveDLLInjection.h
 * injector/GetProcAddressR.c / GetProcAddressR.h
@@ -33,7 +51,7 @@ public-domain `ReflectiveDLLInjection` project and remain in the public domain:
 * native/include/ReflectiveDLLInjection.h
 * native/include/ReflectiveLoader.h
 
-The jni.h / jvmti.h headers in `native/include/` are Sun / Oracle copyrighted
-header files (Oracle Binary Code License) and remain under their original
-licenses; they are reproduced here unmodified to allow the project to
-compile without a JDK install.
+The jni.h / jvmti.h headers in `native/include/` are Sun / Oracle
+copyrighted header files (Oracle Binary Code License) and remain under
+their original licenses; they are reproduced here unmodified to allow
+the project to compile without a JDK install.
