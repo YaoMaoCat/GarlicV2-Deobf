@@ -370,3 +370,16 @@ The jni.h / jvmti.h headers in `native/include/` are Sun / Oracle
 copyrighted header files (Oracle Binary Code License) and remain
 under their original licenses; they are reproduced here unmodified
 to allow the project to compile without a JDK install.
+
+---
+
+## 7. Reverse-engineering notes
+
+Detailed notes on the launcher, injector and the decrypted proxy
+DLL are in [`analysis/`](analysis/INDEX.md):
+
+* [`analysis/decryption.md`](analysis/decryption.md) — the package format.
+* [`analysis/launcher.md`](analysis/launcher.md) — `unpacked_GarlicNELauncherV2.exe`.
+* [`analysis/injector.md`](analysis/injector.md) — `data/GarlicInjector.exe`.
+* [`analysis/proxy.md`](analysis/proxy.md) — the decrypted DLL.
+* [`analysis/auth.md`](analysis/auth.md) — `auth-nonce` / `auth-token`.

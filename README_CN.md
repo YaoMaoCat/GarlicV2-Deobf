@@ -333,3 +333,16 @@ Stephen Fewer 的
 
 `native/include/` 下的 `jni.h` / `jvmti.h` 是 Sun / Oracle 的受版权保护头文件
 （Oracle Binary Code License），按原始许可证保留，未做修改。
+
+---
+
+## 7. 逆向分析笔记
+
+launcher、injector 与解密出的代理 DLL 的详细逆向笔记见
+[`analysis/`](analysis/INDEX.md)：
+
+* [`analysis/decryption.md`](analysis/decryption.md) —— 包格式细节。
+* [`analysis/launcher.md`](analysis/launcher.md) —— `unpacked_GarlicNELauncherV2.exe`。
+* [`analysis/injector.md`](analysis/injector.md) —— `data/GarlicInjector.exe`。
+* [`analysis/proxy.md`](analysis/proxy.md) —— 解密出的 DLL。
+* [`analysis/auth.md`](analysis/auth.md) —— `auth-nonce` / `auth-token` 机制。
