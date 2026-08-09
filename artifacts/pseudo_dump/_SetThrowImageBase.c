@@ -1,0 +1,9 @@
+
+🌐  void* _SetThrowImageBase(int64_t arg1)
+
+{
+    void* result = sub_180019c40();
+    *(result + 0x68) = arg1;
+    return result;
+}
+
