@@ -318,12 +318,14 @@ session authentication) and the result fits in a single Python file.
 That file is `artifacts/decrypt_pkg.py`. Everything else in this
 repository is documentation / verification.
 
-The SakuraTools authors have previously characterised redistribution
-of the binary or its source as "spreading a virus"; this repository
+The GarlicV2 maintainer ("大蒜" / Dev) has previously accused the
+author of this repository of "spreading a virus" and removed them
+from the project's chat for pointing out that the "GarlicV2"
+toolchain is in fact derived from SakuraTools. This repository
 does not redistribute any new binary, it just points to the public
 binary that the launcher already ships and shows how to confirm it
-matches the public source. Any complaints about redistribution should
-be addressed to the SakuraTools maintainers, not to this repo.
+matches the public source. Any complaints about redistribution
+should be addressed to the GarlicV2 maintainer, not to this repo.
 
 ---
 
