@@ -343,7 +343,12 @@ launcher、injector 与解密出的代理 DLL 的详细逆向笔记见
 [`analysis/`](analysis/INDEX.md)：
 
 * [`analysis/decryption.md`](analysis/decryption.md) —— 包格式细节。
+* [`analysis/auth.md`](analysis/auth.md) —— `auth-nonce` / `auth-token` 机制。
 * [`analysis/launcher.md`](analysis/launcher.md) —— `unpacked_GarlicNELauncherV2.exe`。
 * [`analysis/injector.md`](analysis/injector.md) —— `data/GarlicInjector.exe`。
+* [`analysis/themida.md`](analysis/themida.md) —— Themida 保护细节。
 * [`analysis/proxy.md`](analysis/proxy.md) —— 解密出的 DLL。
-* [`analysis/auth.md`](analysis/auth.md) —— `auth-nonce` / `auth-token` 机制。
+* [`analysis/bserver.md`](analysis/bserver.md) —— B 端 Netty 服务器。
+* [`analysis/random_name.md`](analysis/random_name.md) —— 合成类名生成。
+* [`analysis/threat_model.md`](analysis/threat_model.md) —— 工具能做什么 / 不能做什么。
+* [`analysis/verify/`](analysis/verify/) —— 构建+SHA-256 比对脚本。

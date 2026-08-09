@@ -381,7 +381,12 @@ Detailed notes on the launcher, injector and the decrypted proxy
 DLL are in [`analysis/`](analysis/INDEX.md):
 
 * [`analysis/decryption.md`](analysis/decryption.md) — the package format.
+* [`analysis/auth.md`](analysis/auth.md) — `auth-nonce` / `auth-token`.
 * [`analysis/launcher.md`](analysis/launcher.md) — `unpacked_GarlicNELauncherV2.exe`.
 * [`analysis/injector.md`](analysis/injector.md) — `data/GarlicInjector.exe`.
+* [`analysis/themida.md`](analysis/themida.md) — Themida protection internals.
 * [`analysis/proxy.md`](analysis/proxy.md) — the decrypted DLL.
-* [`analysis/auth.md`](analysis/auth.md) — `auth-nonce` / `auth-token`.
+* [`analysis/bserver.md`](analysis/bserver.md) — B-side Netty server.
+* [`analysis/random_name.md`](analysis/random_name.md) — synthetic class names.
+* [`analysis/threat_model.md`](analysis/threat_model.md) — what the tool does/doesn't do.
+* [`analysis/verify/`](analysis/verify/) — build-and-SHA-256-compare script.
