@@ -20,6 +20,7 @@ Plus an analysis of the DLL that comes out of decrypting
 | `bserver.md`     | Full B-side Netty server lifecycle: bootstrap → `ChannelInitializer.initChannel` → per-channel setup → byte-relay handler. Mid-session attach via `Minecraft.execute(Runnable)`. |
 | `random_name.md` | The 96-word vocabulary used to generate synthetic class names (`HookBridge`, `g_relay.dotName`, `g_b.dotName`). Seed entropy budget. |
 | `threat_model.md`| What the tool actually does and doesn't do. Why the "散播病毒" accusation from the GarlicV2 maintainer is wrong. |
+| `dll_vs_native.md` | **Definitive diff between the decrypted DLL and `native/`.** Result: **yes**, 大蒜 added an internal FNV-1a verifier at the start of `DllMain` (`sub_180001ac0` + the `[auth] GarlicProxy internal verification passed/failed` strings). About ~35 lines of new x86-64, the rest of `native/` is byte-for-byte equivalent. |
 | `verify/`        | `build_and_verify.ps1` — compiles `native/` to `MinecraftProxy_msvc.dll` and SHA-256-compares it against `artifacts/GarlicProxy.dll`. The decisive test for the "套壳 vs 原创" question. |
 
 All of these files are reverse-engineering notes; they describe what

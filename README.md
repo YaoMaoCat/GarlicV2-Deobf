@@ -390,3 +390,4 @@ DLL are in [`analysis/`](analysis/INDEX.md):
 * [`analysis/random_name.md`](analysis/random_name.md) — synthetic class names.
 * [`analysis/threat_model.md`](analysis/threat_model.md) — what the tool does/doesn't do.
 * [`analysis/verify/`](analysis/verify/) — build-and-SHA-256-compare script.
+* [`analysis/dll_vs_native.md`](analysis/dll_vs_native.md) — **definitive diff between the DLL and `native/`**; finds that 大蒜 added an internal FNV-1a verifier at the start of `DllMain` (~35 lines of new code; the rest of `native/` is byte-for-byte equivalent).

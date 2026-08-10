@@ -352,3 +352,4 @@ launcher、injector 与解密出的代理 DLL 的详细逆向笔记见
 * [`analysis/random_name.md`](analysis/random_name.md) —— 合成类名生成。
 * [`analysis/threat_model.md`](analysis/threat_model.md) —— 工具能做什么 / 不能做什么。
 * [`analysis/verify/`](analysis/verify/) —— 构建+SHA-256 比对脚本。
+* [`analysis/dll_vs_native.md`](analysis/dll_vs_native.md) —— **DLL 与 `native/` 的终极差异分析**；结论是大蒜在 `DllMain` 开头加了一个 FNV-1a 内部验证器（约 35 行新增代码；`native/` 其余部分与二进制逐字节一致）。
