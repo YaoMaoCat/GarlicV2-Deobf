@@ -389,6 +389,7 @@ DLL are in [`analysis/`](analysis/INDEX.md):
 * [`analysis/auth.md`](analysis/auth.md) — `auth-nonce` / `auth-token`.
 * [`analysis/launcher.md`](analysis/launcher.md) — `unpacked_GarlicNELauncherV2.exe`.
 * [`analysis/injector.md`](analysis/injector.md) — `data/GarlicInjector.exe`.
+* [`analysis/injector_diff.md`](analysis/injector_diff.md) — **diff between SakuraTools `injector/` and `data/GarlicInjector.exe`** (大蒜 added hex‑decode CLI, FNV-1a, PBKDF2+AES-GCM decrypt, auth block injection, Themida).
 * [`analysis/themida.md`](analysis/themida.md) — Themida protection internals.
 * [`analysis/proxy.md`](analysis/proxy.md) — the decrypted DLL.
 * [`analysis/bserver.md`](analysis/bserver.md) — B-side Netty server.

@@ -15,6 +15,7 @@ Plus an analysis of the DLL that comes out of decrypting
 | `auth.md`        | The `auth-nonce` / `auth-token` construction used by the launcher, and why it's not a security boundary. |
 | `launcher.md`    | `unpacked_GarlicNELauncherV2.exe` — Themida layout, imports, license-key prompt, child-process spawn. |
 | `injector.md`    | `data/GarlicInjector.exe` — auth verify, EnumWindows PID hunt, reflective DLL injection, SeDebugPrivilege. |
+| `injector_diff.md` | **Definitive diff between SakuraTools `injector/` and `data/GarlicInjector.exe`.** 大蒜 added: hex‑decode CLI, FNV‑1a verifier, PBKDF2 + AES‑GCM decryption layer, 24‑byte auth block injection, Themida protection. The `injector/` files are verbatim SakuraTools; `GarlicInjector.exe` is a wrapper around them. |
 | `themida.md`     | Themida protection internals: `.themida`/`.boot`/`.SCY` sections, anti-debug, anti-tamper. Why the protection layer is **not** security-relevant for this toolchain. |
 | `proxy.md`       | The decrypted DLL — HookBridge trampolines, `ClassFileLoadHook` bytecode splice into `net.minecraft.network.Connection`, RelayHandler, B-side Netty server on port 25565. |
 | `bserver.md`     | Full B-side Netty server lifecycle: bootstrap → `ChannelInitializer.initChannel` → per-channel setup → byte-relay handler. Mid-session attach via `Minecraft.execute(Runnable)`. |
