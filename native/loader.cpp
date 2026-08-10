@@ -148,8 +148,48 @@ static void RawWriteFile(const char* line) {
     CloseHandle(h);
 }
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID) {
+// ---- internal auth verification (added to the binary, not in upstream) ----
+// Checks the 24-byte auth block passed as lpReserved to DllMain.
+// Layout: [magic 8B] [nonce 8B] [expected_token 8B]
+// Uses the same FNV-1a-64 scheme as the launcher/injector (sub_140001000).
+
+static constexpr const char kBridgeSecret[] = "GarlicBridge-V2-20260809";
+static constexpr uint64_t kFnvOffsetBasis = UINT64_C(0x14650fb0739d0383);
+static constexpr uint64_t kFnvPrime      = UINT64_C(0x00000100000001B3);
+static constexpr uint64_t kMagicGARLICAU = UINT64_C(0x4741524c49434155);
+
+static bool GarlicInternalVerify(const uint64_t authBlock[3]) {
+    if (!authBlock                          ||                          // NULL
+        authBlock[0] != kMagicGARLICAU)    return false;              // bad magic
+
+    uint64_t h = kFnvOffsetBasis;
+    for (size_t i = 0; i < sizeof(kBridgeSecret); ++i)                 // "GarlicBridge-V2-20260809"
+        h = (h ^ uint64_t(kBridgeSecret[i])) * kFnvPrime;
+    for (int b = 0; b < 8; ++b)                                         // nonce (byte-by-byte LE)
+        h = (h ^ uint64_t((authBlock[1] >> (b << 3)) & 0xFF)) * kFnvPrime;
+
+    h               = h * kFnvPrime;
+    h               = h ^ kMagicGARLICAU;
+    uint64_t token  = h * kFnvPrime;
+
+    return token == authBlock[2];                                      // must match supplied token
+}
+
+// ---- DllMain with internal auth gate ----
+// The original upstream DllMain (SakuraTools) has no auth check.
+// This version wraps the original body: if the caller (the injector)
+// did not supply the correct 24-byte auth block, the DLL refuses to
+// load and returns 0.
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
     if (reason == DLL_PROCESS_ATTACH) {
+
+        if (!GarlicInternalVerify(static_cast<const uint64_t*>(lpReserved))) {
+            RawWriteFile("[auth] GarlicProxy internal verification failed");
+            return FALSE;
+        }
+        RawWriteFile("[auth] GarlicProxy internal verification passed");
+
         RawWriteFile("[raw] DllMain entry");
         DisableThreadLibraryCalls(hModule);
         RawWriteFile("[raw] DisableThreadLibraryCalls done");
