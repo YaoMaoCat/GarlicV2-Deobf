@@ -6,16 +6,20 @@
 >
 > Every C / C++ / PowerShell / CMake file in this tree (everything in
 > `injector/`, `mindll/`, `native/`, `proxy/`, `scripts/`, `tests/`,
-> `CMakeLists.txt`) is **unchanged source from**
+> `CMakeLists.txt`) is **source from**
 > [GzSakura1338/SakuraTools](https://github.com/GzSakura1338/SakuraTools)
 > (the "Garlic" / "GarlicV2" Minecraft JVMTI proxy toolchain).
-> It is included here **only** so a reader can verify that the DLL
-> recovered from `artifacts/GarlicProxy.pkg` matches the source it
-> claims to come from.
+> The only exception is `native/loader.cpp`, which has been modified to
+> match the binary: GarlicV2's maintainer added an FNV-1a internal
+> authentication check to `DllMain` (~35 lines; see
+> [`analysis/dll_vs_native.md`](analysis/dll_vs_native.md)).
+> Everything else is included here **only** so a reader can verify that
+> the DLL recovered from `artifacts/GarlicProxy.pkg` matches the source
+> it claims to come from.
 >
-> The only thing this repository actually contributes is the
-> `artifacts/` drop:
+> The only thing this repository actually contributes is:
 >
+> - `analysis/` — full reverse-engineering notes (launcher, injector, Themida, proxy DLL internals, BServer, auth, DLL vs native diff).
 > - `artifacts/GarlicProxy.pkg` – the encrypted package as shipped.
 > - `artifacts/GarlicProxy.dll` – the DLL obtained by decrypting it.
 > - `artifacts/decrypt_pkg.py`  – the decryption script.
@@ -35,10 +39,11 @@ This repository contains:
 |------|------------|
 | `injector/` | Native C reflective loader (`reflective_injector.exe`). **(SakuraTools source, unchanged.)** |
 | `mindll/`   | Minimal reflective DLL sample used for testing. **(SakuraTools source, unchanged.)** |
-| `native/`   | The Minecraft JVMTI agent itself. **(SakuraTools source, unchanged.)** |
+| `native/`   | The Minecraft JVMTI agent itself. **(SakuraTools source; `loader.cpp` DllMain modified — FNV-1a verifier added to match the binary.)** |
 | `proxy/launcher.ps1` | The user-facing launcher / injector UI. **(SakuraTools source, unchanged.)** |
 | `tests/`    | Build-time Java/C++ self-tests. **(SakuraTools source, unchanged.)** |
 | `scripts/`  | Build + inject helper scripts. **(SakuraTools source, unchanged.)** |
+| `analysis/` | **New in this repo.** Full reverse-engineering notes (launcher, injector, Themida, proxy DLL internals, BServer, auth mechanism, DLL vs native diff). |
 | `artifacts/` | **New in this repo.** Recovered binary, encrypted package, decoder script, PseudoC dump. |
 | `artifacts/decrypt_pkg.py` | **Only new code.** Single-file Python decryptor; everything else is documentation / dumped artifacts. |
 

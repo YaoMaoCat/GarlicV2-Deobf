@@ -8,12 +8,16 @@
 > `mindll/`、`native/`、`proxy/`、`scripts/`、`tests/`、`CMakeLists.txt`
 > 的全部内容）**都是来自**
 > [GzSakura1338/SakuraTools](https://github.com/GzSakura1338/SakuraTools)
-> 的**未修改源码**（即"Garlic" / "GarlicV2" Minecraft JVMTI 代理工具链）。
-> 把它们放在这里**仅仅**是为了让读者能验证：从 `artifacts/GarlicProxy.pkg`
+> 的源码（即"Garlic" / "GarlicV2" Minecraft JVMTI 代理工具链）。
+> 唯一的例外是 `native/loader.cpp`：为了与二进制一致，GarlicV2 的维护者在
+> `DllMain` 里加了一个 FNV-1a 内部鉴权（约 35 行；详见
+> [`analysis/dll_vs_native.md`](analysis/dll_vs_native.md)）。
+> 其他内容放在这里**仅仅**是为了让读者能验证：从 `artifacts/GarlicProxy.pkg`
 > 中恢复出来的 DLL 与其所声称的源码一致。
 >
-> 本仓库**真正新增的内容**只有 `artifacts/`：
+> 本仓库**真正新增的内容**：
 >
+> - `analysis/` — 完整逆向分析笔记（launcher、injector、Themida、代理 DLL、BServer、鉴权、DLL vs native 差异）。
 > - `artifacts/GarlicProxy.pkg` —— 发布时随 launcher 一起分发的加密包。
 > - `artifacts/GarlicProxy.dll` —— 解密得到的 DLL。
 > - `artifacts/decrypt_pkg.py`  —— 解密脚本。
@@ -31,10 +35,11 @@
 |------|------|
 | `injector/` | 反射式 DLL 注入器（`reflective_injector.exe`）。**（SakuraTools 源码，未改动。）** |
 | `mindll/`   | 用于测试的最小反射式 DLL 示例。**（SakuraTools 源码，未改动。）** |
-| `native/`   | Minecraft JVMTI 代理本体。**（SakuraTools 源码，未改动。）** |
+| `native/`   | Minecraft JVMTI 代理本体。**（SakuraTools 源码；`loader.cpp` DllMain 有修改——加入了 FNV-1a 验证器以与二进制一致。）** |
 | `proxy/launcher.ps1` | 用户侧的 launcher / 注入器 UI。**（SakuraTools 源码，未改动。）** |
 | `tests/`    | 构建期的 Java / C++ 自测。**（SakuraTools 源码，未改动。）** |
 | `scripts/`  | 构建 + 注入辅助脚本。**（SakuraTools 源码，未改动。）** |
+| `analysis/` | **本仓库新增。** 完整逆向分析笔记（launcher、injector、Themida、代理 DLL、BServer、鉴权机制、DLL vs native 差异分析）。 |
 | `artifacts/` | **本仓库新增。** 解密出的二进制、加密包、解密脚本、PseudoC dump。 |
 | `artifacts/decrypt_pkg.py` | **唯一新增的代码。** 单文件 Python 解密器；其他都是文档 / dump 产物。 |
 
