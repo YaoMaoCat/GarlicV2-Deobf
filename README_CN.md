@@ -351,6 +351,8 @@ launcher、injector 与解密出的代理 DLL 的详细逆向笔记见
 * [`analysis/auth.md`](analysis/auth.md) —— `auth-nonce` / `auth-token` 机制。
 * [`analysis/launcher.md`](analysis/launcher.md) —— `unpacked_GarlicNELauncherV2.exe`。
 * [`analysis/injector.md`](analysis/injector.md) —— `data/GarlicInjector.exe`。
+* [`analysis/injector_diff.md`](analysis/injector_diff.md) —— **SakuraTools `injector/` 与 `data/GarlicInjector.exe` 的差异**。
+* [`analysis/injector_chain.md`](analysis/injector_chain.md) —— **完整鉴权链：launcher → injector → DLL**（Mermaid 时序图 + 5 个胶水点）。
 * [`analysis/themida.md`](analysis/themida.md) —— Themida 保护细节。
 * [`analysis/proxy.md`](analysis/proxy.md) —— 解密出的 DLL。
 * [`analysis/bserver.md`](analysis/bserver.md) —— B 端 Netty 服务器。
