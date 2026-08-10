@@ -67,6 +67,30 @@ target_link_libraries(reflective_injector PRIVATE
     user32
 )
 
+# garlic_injector —大蒜's wrapper with FNV-1a + auth block injection
+# (not in SakuraTools; added by the GarlicV2 maintainer)
+add_executable(garlic_injector
+    injector/garlic_injector.c
+    injector/garlic_auth.c
+    injector/Inject.c
+    injector/LoadLibraryR.c
+    injector/GetProcAddressR.c
+)
+target_include_directories(garlic_injector PRIVATE injector)
+target_compile_definitions(garlic_injector PRIVATE
+    REFLECTIVEDLLINJECTION_CUSTOM_DLLMAIN
+    WIN_X64
+    WIN32_LEAN_AND_MEAN
+    _CRT_SECURE_NO_WARNINGS
+)
+target_link_libraries(garlic_injector PRIVATE
+    advapi32
+    iphlpapi
+    kernel32
+    user32
+    ws2_32
+)
+
 add_library(starain_inject SHARED
     native/jni_inject.cpp
     injector/Inject.c

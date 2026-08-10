@@ -37,7 +37,7 @@ This repository contains:
 
 | Path | What it is |
 |------|------------|
-| `injector/` | Native C reflective loader (`reflective_injector.exe`). **(SakuraTools source, unchanged.)** |
+| `injector/` | **SakuraTools core** + **大蒜's additions.**  `cli.c`, `Inject.c`, `LoadLibraryR.c`, `GetProcAddressR.c`, `inject_ll.c` are verbatim SakuraTools. `garlic_auth.c` (FNV-1a verifier + hex decode), `garlic_injector.c` (auth‑block CLI + remote injection) and `garlic_auth.h` were reconstructed from the binary. |
 | `mindll/`   | Minimal reflective DLL sample used for testing. **(SakuraTools source, unchanged.)** |
 | `native/`   | The Minecraft JVMTI agent itself. **(SakuraTools source; `loader.cpp` DllMain modified — FNV-1a verifier added to match the binary.)** |
 | `proxy/launcher.ps1` | The user-facing launcher / injector UI. **(SakuraTools source, unchanged.)** |

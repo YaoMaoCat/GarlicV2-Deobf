@@ -33,7 +33,7 @@
 
 | 路径 | 作用 |
 |------|------|
-| `injector/` | 反射式 DLL 注入器（`reflective_injector.exe`）。**（SakuraTools 源码，未改动。）** |
+| `injector/` | **SakuraTools 核心** + **大蒜的修改。** `cli.c`、`Inject.c`、`LoadLibraryR.c`、`GetProcAddressR.c`、`inject_ll.c` 为 SakuraTools 原版，逐字相同。`garlic_auth.c`（FNV-1a 验证器 + 十六进制解码）、`garlic_injector.c`（auth‑block 命令行 + 远程注入）和 `garlic_auth.h` 从二进制重建而来。 |
 | `mindll/`   | 用于测试的最小反射式 DLL 示例。**（SakuraTools 源码，未改动。）** |
 | `native/`   | Minecraft JVMTI 代理本体。**（SakuraTools 源码；`loader.cpp` DllMain 有修改——加入了 FNV-1a 验证器以与二进制一致。）** |
 | `proxy/launcher.ps1` | 用户侧的 launcher / 注入器 UI。**（SakuraTools 源码，未改动。）** |
