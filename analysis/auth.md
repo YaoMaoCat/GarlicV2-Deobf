@@ -126,18 +126,37 @@ if (data_180046030 != 0)        // HookBridge already installed
     ...
 ```
 
-The DLL checks the constant `"GARLICAU"` in the auth block (see the
-"j_sub_14000c8e0" style strncmp in `sub_180001740.c`) but does not
-verify the FNV-1a token at all — once `data_180046030` is non-zero the
-auth-block bytes are accepted as long as the leading 8 bytes are
-right.
+The DLL verifies the auth block **twice**:
 
-This means the auth block also doesn't gate the DLL's *operation*;
-the DLL only checks that the bytes are shaped correctly. The actual
-gate that decides whether the DLL runs is in the injector (which
-*does* check the FNV-1a token before calling the decryptor), but as
-noted in §4, the FNV-1a check is trivially bypassed by anyone with
-the PBKDF2 password.
+1. **In DllMain** (`sub_180001ba0`), on `PROCESS_ATTACH`, it calls
+   `sub_180001ac0` — **a complete FNV-1a re-derivation**, NOT just a
+   constant check:
+
+   ```c
+   // V2 DLL verifier sub_180001ac0 ("GarlicInternalVerify", added by 大蒜)
+   if (arg1 && *arg1 == 0x4741524c49434155) {           // magic
+       rax = 0x14650fb0739d0383;
+       for (rcx = 0; rcx < 0x18; rcx++)                // 24 bytes
+           rax = (rax ^ "GarlicBridge-V2-20260809"[rcx]) * 0x100000001b3;
+       for (r8 = 0; r8 < 8; r8++)                      // nonce, 8 bytes
+           rax = (rax ^ ((arg1[1] >> (r8 * 8)) & 0xff)) * 0x100000001b3;
+       result = ((rax ^ 0x4741524c49434155) * 0x100000001b3);  // magic mix
+   }
+   ok = (arg1 && *arg1 == 0x4741524c49434155 && arg1[2] == result);
+   ```
+
+   The computation matches the launcher/injector **exactly** (24-byte
+   bridge-string hash → 8-byte nonce hash → magic mix), so the DLL
+   really does re-derive and compare the FNV-1a token. If it fails,
+   `DllMain` returns 0 and the DLL is not attached.
+
+2. In `ProxyInitWorker` (`sub_180001740`), the leading `"GARLICAU"`
+   bytes are checked again before the proxy initialises.
+
+So the auth block **does** gate the DLL's operation: the FNV-1a token
+is re-derived inside the DLL itself, not only in the injector. (The
+gate is still trivially reproducible by anyone with the construction,
+and the PBKDF2 password, but it is not a dummy check.)
 
 ## 6. Sample captured auth block
 
@@ -166,5 +185,5 @@ auth block. The token was the FNV-1a derivation of that nonce.
 | Is the PBKDF2 key derivable from `auth-nonce` + `auth-token`? | **No.** The key is the hard-coded 32-byte constant. |
 | Can the auth block be regenerated without the launcher? | **Yes.** Anyone who knows the FNV-1a construction can re-derive the token from the nonce. |
 | Does the injector's auth gate prevent `sub_1400021e0` from running? | **Only by short-circuiting `sub_140001750` before the decryptor call.** If the gate fails, `sub_1400021e0` is never called and the DLL is never injected. |
-| Does the DLL's auth gate (the `"GARLICAU"` constant) prevent the proxy from running? | **No.** It only checks the constant; the FNV-1a re-derivation is not done in the DLL. |
+| Does the DLL's auth gate (the `"GARLICAU"` constant) prevent the proxy from running? | **Yes — through a full FNV-1a re-derivation.** V2 DLL `DllMain`→`sub_180001ac0` recomputes the token (bridge-string hash → nonce hash → magic mix) and rejects the attach if it mismatches. It is a real check, though trivially reproducible. |
 | Effective security boundary | **None for the proxy DLL itself; only the launcher-side license-key `strcmp("dasuan666")` provides any user-facing access control.** |
